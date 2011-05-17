@@ -8,21 +8,17 @@
   (:require [com.ubermensch.ant.clojure.base-task :as base]
             [clojure.set :as set]))
 
-(def failed (ref 0))
-(declare orig-report)
-
 (defn- -init-task [] (base/initial-state))
 
 (defn -execute [this]
   (base/with-classloader
-    (let [namespaces (set (set/union
+    (let [namespace-names (set (set/union
                             (map #(.name %) (:namespaces @state))
-                            (base/filesets->namespaces (:filesets @state))))]
-      (doseq [an-ns namespaces] (require (symbol an-ns)))
-      (binding [orig-report report
-                report #(do (if (#{:fail :error} (:type %))
-                              (dosync (commute failed inc)))
-                          (orig-report %))]
-        (doseq [an-ns namespaces] (run-tests (symbol an-ns)))
-        (if (pos? @failed) (throw (org.apache.tools.ant.BuildException.
-                                    (str "tests failed: " @failed))))))))
+                            (base/filesets->namespaces (:filesets @state))))
+          namespaces (map symbol namespace-names)]
+      (apply require namespaces)
+      (let [summary (apply run-tests namespaces)
+            failures (+ (:fail summary) (:error summary))]
+        (if (pos? failures)
+          (throw (org.apache.tools.ant.BuildException.
+                   (str "tests unsuccessful: " failures))))))))
