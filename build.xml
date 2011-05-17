@@ -23,48 +23,60 @@
     <delete file="${jar.name}" />
   </target>
 
-  <target name="def-tasks">
-    <!-- In a real build file using this library, the classnames would not
+  <!--target name="def-tasks">
+    <!- - In a real build file using this library, the classnames would not
          be in this "bootstrap" package. That is only necessary here to avoid
-         name conflicts with the classes we're compiling. -->
+         name conflicts with the classes we're compiling. - ->
     <taskdef name="compile-clojure"
       classname="com.ubermensch.ant.clojure.bootstrap.CompileTask"
       classpath="antlib/clojure-ant-tasks-bootstrap.jar:lib/clojure.jar:lib/clojure-contrib.jar" />
     <taskdef name="test-clojure"
       classname="com.ubermensch.ant.clojure.bootstrap.TestTask"
       classpath="antlib/clojure-ant-tasks-bootstrap.jar:lib/clojure.jar:lib/clojure-contrib.jar" />
-  </target>
+  </target-->
 
-  <target name="compile" depends="def-tasks">
+  <!--target name="compile" depends="def-tasks">
     <mkdir dir="${classes.dir}" />
+
+    <javac srcdir="${src.dir}" destdir="${classes.dir}">
+      <classpath><path refid="project.classpath" /></classpath>
+    </javac>
+
     <compile-clojure>
       <classpath>
         <path refid="project.classpath" />
-        <!--
+        <!- -
         <pathelement location="${src.dir}" />
         <pathelement location="${classes.dir}" />
         <fileset dir="lib">
           <include name="**/*.jar" />
         </fileset>
-        -->
+        - ->
       </classpath>
       <namespace>com.ubermensch.ant.clojure.namespace</namespace>
       <namespace>com.ubermensch.ant.clojure.base-task</namespace>
       <namespace>com.ubermensch.ant.clojure</namespace>
     </compile-clojure>
-  </target>
+  </target-->
 
-  <!--
   <target name="compile">
     <mkdir dir="${classes.dir}" />
+
+    <javac srcdir="${src.dir}" destdir="${classes.dir}">
+      <classpath><path refid="project.classpath" /></classpath>
+    </javac>
+
     <java classname="clojure.lang.Compile" fork="true"
       resultproperty="compile.result">
       <classpath>
         <path refid="project.classpath" />
+        <pathelement location="${classes.dir}" />
       </classpath>
       <sysproperty key="clojure.compile.path" value="${classes.dir}" />
       <arg value="com.ubermensch.ant.clojure.namespace" />
       <arg value="com.ubermensch.ant.clojure.base-task" />
+      <arg value="com.ubermensch.ant.clojure.test-task" />
+      <arg value="com.ubermensch.ant.clojure.compile-task" />
       <arg value="com.ubermensch.ant.clojure" />
     </java>
       
@@ -76,7 +88,6 @@
 
     <fail if="compile.failure" message="compile failed" />
   </target>
-  -->
 
   <target name="test" depends="compile">
     <java classname="clojure.main" fork="true" resultproperty="test.result">
