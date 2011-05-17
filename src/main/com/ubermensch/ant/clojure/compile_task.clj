@@ -18,9 +18,7 @@
 
 (defn -setWarnOnReflection [this s]
   (let [l (.toLowerCase s)
-	b (if (or (= l "yes") (= l "true") (= l "on"))
-	    true
-	    false)]
+	b (#{"yes" "true" "on"} l)]
     (base/with-state
      (swap! state #(assoc % :warn-on-reflection b)))))
 
@@ -64,4 +62,4 @@
           (compile-ns an-ns)))
       (catch Exception e
         (throw (org.apache.tools.ant.BuildException.
-                 (str "compilation failed: " (.getMessage e))))))))
+                 "compilation failed: " e))))))
