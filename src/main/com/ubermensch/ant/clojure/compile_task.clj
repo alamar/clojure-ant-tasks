@@ -61,5 +61,7 @@
                               (base/filesets->namespaces (:filesets @state)))]
           (compile-ns an-ns)))
       (catch Exception e
-        (throw (org.apache.tools.ant.BuildException.
-                 "compilation failed: " e))))))
+        (throw
+          (org.apache.tools.ant.BuildException.
+            (str "compilation failed (ant -v for details):" \newline (.getMessage e))
+            e))))))
