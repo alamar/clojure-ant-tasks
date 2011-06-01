@@ -1,6 +1,7 @@
 # Clojure Ant Tasks
 
 by J. McConnell
+forked by Ilya Kasnacheev
 
 ## Overview
 
@@ -16,6 +17,19 @@ a "successful" build, in Ant's eyes.
 The tasks in this package aim to DRY out the building and testing of Clojure
 code in Ant while at the same time improve the status reporting of failed
 builds and tests.
+
+UPD:
+As if somebody cared, I made clojure-ant-tasks to run with Clojure 1.2
+
+Here is the checklist of things I want to implement but hasn't yet in
+case I forget something:
+
+* Fix a bug where compilepath property on clojure-compile is relative
+to current work dir, not to the project build root.
+* Add support of junit/TAP output for clojure-test.
+* Possibly write Teamcity output.
+
+Otherwise it works just fine.
 
 ## Use
 
